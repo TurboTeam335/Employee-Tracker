@@ -139,7 +139,7 @@ const addDepartment = async () => {
 };
 
 const addRole = async () => {
-  const departments = await db.promise().query("SELECT * FROM departments");
+  const [departments] = await db.promise().query("SELECT * FROM departments");
   const { title, salary, departmentId } = await inquirer.prompt([
     {
       type: "input",
@@ -157,7 +157,7 @@ const addRole = async () => {
         return true;
       },
     },
-    // TODO Not working either
+  
     {
       type: "list",
       name: "departmentId",
@@ -178,52 +178,44 @@ const addRole = async () => {
 };
 
 const addEmployee = async () => {
-  const roles = await db.promise().query("SELECT id, title FROM roles");
-  let managers = [];
-  await db
+  const [roles] = await db.promise().query("SELECT id, title FROM roles");
+  const [managers] = await db
     .promise()
     .query(
-      "SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL"
-    )
-    .then(([rows]) => {
-      managers = rows;
-    })
-    .then(async () => {
-      console.log(managers);
-      const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
-        {
-          type: "input",
-          name: "firstName",
-          message: "What is the first name of the employee?",
-        },
-        {
-          type: "input",
-          name: "lastName",
-          message: "What is the last name of the employee?",
-        },
-        {
-          type: "list",
-          name: "departmentId",
-          message: "What is the department?",
-          choices: [
-            { name: "Nuclear Power Plant", value: 1 },
-            { name: "Elementary School", value: 2 },
-            { name: "Krusty Burger", value: 3 },
-          ],
-        },
+      "SELECT id, first_name, last_name FROM employee"
+    );
 
-        // TODO Need help here //
-        {
-          type: "list",
-          name: "managerId",
-          message: "Who is the employee's manager?",
-          choices: managers.map(({ id, first_name, last_name }) => ({
-            name: `${first_name} ${last_name}`,
-            value: id,
-          })),
-        },
-      ]);
-    });
+  // console.log(managers);
+  const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the first name of the employee?",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "What is the last name of the employee?",
+    },
+    {
+      type: "list",
+      name: "roleId",
+      message: "What is the department?",
+      choices: roles.map(({ id, title }) => ({
+        name: title,
+        value: id,
+      })),
+    },
+    {
+      type: "list",
+      name: "managerId",
+      message: "Who is the employee's manager?",
+      choices: managers.map(({ id, first_name, last_name }) => ({
+        name: `${first_name} ${last_name}`,
+        value: id,
+      })),
+    },
+  ]);
 
   await db
     .promise()
