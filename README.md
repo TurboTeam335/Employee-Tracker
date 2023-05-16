@@ -10,7 +10,7 @@ To view the Employee-Tracker code please visit https://github.com/TurboTeam335/E
 
 To view a walkthrough video please click on the link below
 
-https://watch.screencastify.com/v/xSANjN6id34QokLZLMFl
+https://watch.screencastify.com/v/GwRVs1M6otucUh1dpsoy
 
 ## Usage
 
